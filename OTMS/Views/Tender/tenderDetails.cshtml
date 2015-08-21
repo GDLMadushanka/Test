@@ -1,0 +1,187 @@
+﻿@model OTMS.Models.BiddersOfNotice
+
+@{
+    ViewBag.Title = "tenderDetails";
+}
+
+<h2>Tender Details</h2>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="col-md-12" style="background-color: #dedef8;">
+            <!--Sidebar content-->
+            <div class="row">
+
+                <div class="col-lg-12" style="padding-top: 15px; overflow-y: scroll; height: 500px;">
+
+                    @{OTMS.Models.TenderNoticeModel temp = (OTMS.Models.TenderNoticeModel)ViewData["tender"];
+                      String expired;
+                    TimeSpan differnce = temp.ExpDateTime - DateTime.Now;
+                    if ((int)differnce.Minutes<0){expired="true";}else {expired="false";}
+                    <label class="col-lg-2 control-label" >Type :</label>
+                     <label class="col-lg-10 control-label" style="color:blue">@temp.FieldName</label>   
+                     <label class="col-lg-2 control-label" >Submitted Date :</label>
+    <label class="col-lg-10 control-label" style="color:blue">@temp.SubDateTime</label>
+    if ((int)differnce.Minutes > 0)
+    {
+
+                         <label class="col-lg-2 control-label" >Remaining Days :</label>
+    <label class="col-lg-10 control-label" style="color:blue">@String.Format("{0:N2}", differnce.TotalDays);</label>}
+    if (temp.AcceptedBidder != null)
+    {
+                    <label class="col-lg-2 control-label" >Accepted Bidder :</label>
+    <label class="col-lg-10 control-label" style="color:blue">@temp.AcceptedBidder</label>
+                    <label class="col-lg-2 control-label" >Acceptance Notice :</label>
+    <label class="col-lg-10 control-label" style="color:blue">@temp.AcceptanceNotice</label>
+
+    }
+}
+                    @{List<OTMS.Models.BiddersOfNotice> biddersList = (List<OTMS.Models.BiddersOfNotice>)ViewData["Bidders"];
+                      List<OTMS.Models.InquiryModel> inqList = (List<OTMS.Models.InquiryModel>)ViewData["inqList"];
+                      }
+                    <ul class="nav nav-pills" id="showbids">
+                        <li class="active"><a href="#">Bids for this tender <span class="badge">@biddersList.Count</span></a></li>
+                    </ul>
+                    <div id ="notexpired"class="alert alert-dismissible alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>Sorry !</strong> You can't access the submitted bids until expired. 
+                    </div>
+
+    <hr />
+                    @if((int)differnce.Minutes<0){
+
+                    <div id="biddetails">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Bid Id</th>
+                                    <th>Bidder</th>
+                                    <th>Address</th>
+                                    <th>TP No</th>
+                                    <th>PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (OTMS.Models.BiddersOfNotice bidders in biddersList)
+                                {
+
+                                    <tr>
+                                        <td>@bidders.BidId</td>
+                                        <td>@bidders.Name</td>
+                                        <td>@bidders.Address</td>
+                                        <td>@bidders.tpNo</td>
+                                        <td>
+                                            <a href="#" onclick="Download('@bidders.BidId')" class="btn btn-primary btn-xs" target="_blank">Download</a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>}
+                   
+                    
+
+                    <hr />
+                    <h4>Unanswered Inquiries about this tender</h4>
+                    @foreach (OTMS.Models.InquiryModel inq in inqList)
+                    {
+                        <div class="tempory">
+                        <label class="col-lg-2 control-label" >Question :</label>
+                        <label class="col-lg-10 control-label" style="color:blue">@inq.Question</label>
+                        <label class="col-lg-2 control-label" >Answer :</label>
+                        <div class="col-lg-8">
+                         <input class="form-control" type="text" id="@inq.InquiryId">
+      </div>
+                        <div class="col-lg-2">
+                            <a href="#" class="btn btn-success" onclick="submitAns(@inq.InquiryId,'@inq.User')">Submit</a>
+      </div><br /><br /></div>
+                    }
+                    <hr />
+                    <div id="winner">                         
+                        @if(temp.AcceptedBidder == ""&& biddersList.Count > 0){ 
+                    String x=null;
+                    <label for="select" class="col-lg-2 control-label">Winning Bid ID</label>
+                    <div class="col-lg-1">
+                        <select class="form-control" id="select">
+                            @foreach (OTMS.Models.BiddersOfNotice bidders in biddersList)
+                            {
+                                 <option>@bidders.BidId</option>
+                                 x = @bidders.userName;
+                            }
+                        </select>
+                    </div>
+                    <label for="select" class="col-lg-1 control-label">Reasoning</label>
+                    <div class="col-lg-4">
+                        <input class="form-control" type="text" id="reason">
+                    </div>
+                    <div class="col-lg-4">
+                        <a href="#" class="btn btn-success" onclick="selectWinner('@x')">Select this bid as winning bid</a>
+                    </div>}
+                        else { ViewBag.expired = false; }
+</div>
+            </div>
+        </div>
+    </div>
+</div></div>
+
+<script type="text/javascript">
+
+   
+
+    $('#showbids').on('click', function (val) {
+        $('#biddetails').show(1000);
+      
+        if (Boolean(@expired) == false)
+        {
+           $('#notexpired').show(1000);
+        }
+        
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#biddetails').hide();
+        $('#notexpired').hide();
+    }, false);
+
+    function selectWinner(val)
+    {
+        var bidid = $('#select').val();
+        var reason = $('#reason').val();
+        var tenid = String(@temp.NoticeId);
+
+        $.getJSON("@Url.Action("TenderWinner", "Tender", new { tenderID="_tenderId", acceptedbidder = "_bidder",notice="_notice" })".replace("_tenderId",tenid ).replace("_bidder", val).replace("_notice", reason), function (data) {
+        });
+
+        $.getJSON("@Url.Action("CreateType3Notification", "Notification", new { tenderID = "_tenderId", bidder = "_bidder"})".replace("_tenderId",tenid ).replace("_bidder", val), function (data) {
+        });
+
+        $('#winner').hide(1000);
+    }
+
+    function submitAns(val,val2)
+    {
+        console.log(val);
+        console.log(val2);
+        
+        var x = document.getElementById(val);
+        $.getJSON("@Url.Action("answerInquiry", "Tender", new { inqueryId="_inqueryId", answer = "_answer" })".replace("_inqueryId", val).replace("_answer", x.value), function (data) {
+        });
+
+        $.getJSON("@Url.Action("CreateType2Notification", "Notification", new { tenderID = "_tenderID", user = "_user" })".replace("_tenderID",String(@temp.NoticeId)).replace("_user", val2), function (data) {
+         });
+
+        $(x).parents(".tempory").hide(1000);
+    }
+
+   
+    
+
+    function Download(val)
+    {
+            window.location.href = '/Tender/Download/' + val;
+    }
+    
+    </script>
+
+@Html.DisplayFor(m => ViewData);

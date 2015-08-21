@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+  
+
+
+
+    
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.js")"></script>
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/custom.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/jquery.datetimepicker.css")" />
+
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+
+
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.datetimepicker.js")"></script>
+       
+   
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+       
+        <div class="container">
+            <div class="navbar-header">
+                <img src="@Url.Content("~/Content/OTMSlogo2.png")" height="60" width="100" />
+              
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+                <ul class="nav navbar-nav navbar-right">
+                    @if (Session["isOrg"] == null)
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Register <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="@Url.Action("registerNewOrganization", "User")">Organization</a></li>
+                                <li><a href="@Url.Action("registerNewBidder", "User")">Bidder</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Login <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="@Url.Action("OrganizationLogin", "Organization")">Organization</a></li>
+                                <li><a href="@Url.Action("BidderLogin","Bidder")">Bidder</a></li>
+                            </ul>
+                        </li>
+                    }
+                    @if (Session["isOrg"] != null)
+                    {
+                        if ((bool)Session["isOrg"])
+                        {
+                            
+                            <li> <img id="pictureSample" width="50" height="50" src="@String.Format("data:image/jpg;base64,{0}", Convert.ToBase64String((byte[])Session["profilePic"]))" /></li>
+                            <li><a href="@Url.Action("OrgDashboard", "Organization")">@Session["name"]
+                            </a></li>
+                        }
+                        else
+                        {
+                            <li> <img id="pictureSample" width="50" height="50" src="@String.Format("data:image/jpg;base64,{0}", Convert.ToBase64String((byte[])Session["profilePic"]))" /></li>
+                            <li><a href="@Url.Action("BidDashboard", "Bidder")">@Session["user"]
+                            </a></li>
+                         
+                        }
+                        <li><a href="@Url.Action("Logout", "User")">Logout</a></li>
+                    }
+                </ul>
+            </div>
+      </div>
+        </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    
+    
+</body>
+</html>

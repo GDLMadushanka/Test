@@ -1,0 +1,17 @@
+﻿
+
+.main {
+    text-align:center;
+}
+
+.align-left{
+    text-align:left;
+}
+
+#imgInput{
+    margin-top:11px;
+}
+
+#hospitalTable{
+    cursor:pointer;
+}

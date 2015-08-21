@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Bidderlogin";
+}
+
+<h2>Bidder login</h2>
+
+
+<br />
+<div class="row">
+    <div class="col-lg-6 col-lg-offset-3">
+        <div class="well bs-component">
+            <form class="form-horizontal" name="registerForm" action="@Url.Action("Bidderlogin", "Bidder")" method="POST" enctype="multipart/form-data">
+                <fieldset>
+                    <legend>Login</legend>
+
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-2 control-label"> User Name</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" name="username" placeholder="User Name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                        <div class="col-lg-10">
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-2 col-lg-offset-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+@Html.DisplayFor(m => ViewData);

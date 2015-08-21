@@ -1,0 +1,215 @@
+﻿
+@model OTMS.Models.TenderNoticeModel
+@{
+    ViewBag.Title = "BidDashboard";
+    List<OTMS.Models.NotificationModel> notilist = (List<OTMS.Models.NotificationModel>)ViewData["notifications"];
+}
+
+    <h3>@Session["user"]'s Dashboard</h3>
+
+<div class="btn-group show-on-hover">
+    <a href="#" class="btn btn-info">Notifications (@notilist.Count)</a>
+    <a aria-expanded="true" href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+    <ul class="dropdown-menu">
+
+@foreach (OTMS.Models.NotificationModel noti in (List<OTMS.Models.NotificationModel>)ViewData["notifications"])
+                            {
+
+        <li><a href="#" onclick="notification('@noti.NotificationId')">@noti.NotificationText</a></li>
+
+}
+    </ul>
+</div><br /><br />
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+
+
+            <div class="col-md-3" style="background-color: #dedef8;">
+                <!--Sidebar content-->
+                <div class="row">
+              
+                        <div class="col-lg-12" style="padding-top: 15px; overflow-y: scroll; height: 500px;">
+
+                            @foreach (OTMS.Models.TenderNoticeModel temp in (List<OTMS.Models.TenderNoticeModel>)ViewData["tenders"])
+                            {
+                                TimeSpan differnce = temp.ExpDateTime - DateTime.Now;
+                                <div class="panel panel-info">
+                                    <div class="panel-heading" id="@temp.NoticeId">
+                                        <h3 class="panel-title">Notice no @temp.NoticeId</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p class="text-info">Type           : @temp.FieldName</p>
+                                        <p class="text-info">Organization   : @temp.Organization</p>
+                                        <p class="text-info">Remaining Days : @String.Format("{0:N2}", differnce.TotalDays);</p>
+
+                                        <div class="btn-group btn-group-justified">
+                                            <a href="#" class="btn btn-default" onclick="compDetails('@temp.Organization')">Info</a>
+                                            <a href="#" class="btn btn-default" onclick="loadpdf('@temp.NoticeId')">PDF</a>
+                                            <a href="#" class="btn btn-default" data-whatever="@temp.NoticeId" data-toggle="modal" data-target="#exampleModal">Ask</a>
+                                        </div>
+
+                                        <div class="btn-group btn-group-justified">
+                                            <a href="#" class="btn btn-default" onclick="info('@temp.NoticeId')">Inquiries</a>
+                                            <a href="#" class="btn btn-default" onclick="bid('@temp.NoticeId')">Bid</a>
+                                           
+                                        </div>
+
+                                   
+
+                                  
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+              
+                </div>
+            </div>
+
+            <div class="col-md-1" ></div>
+
+            <div class="col-md-8" style="background-color: #dedef8;">
+                <!--Body content-->
+                <div class="row-fluid" id="Details">
+                    
+                    <label class="col-lg-2 control-label">Company :</label>
+                    <label class="col-lg-10 control-label" style="color:blue" id="Company"></label>  
+                    <label class="col-lg-2 control-label">Address :</label>
+                    <label class="col-lg-10 control-label" style="color:blue" id="Address"></label>  
+                    <label class="col-lg-2 control-label">TP      :</label>
+                    <label class="col-lg-10 control-label" style="color:blue" id="TP"></label>
+                    <label class="col-lg-2 control-label">Email   :</label>
+                    <label class="col-lg-10 control-label" style="color:blue" id="Email"></label>
+                    <label class="col-lg-2 control-label">Web     :</label>
+                    <label class="col-lg-10 control-label" style="color:blue" id="Web"></label>
+                    </div>
+                <div class="row-fluid">
+                   
+                    <iframe src="" width="700" height="490" id="pdf"></iframe>
+
+                </div>
+                <div id="inquiry">
+                    
+                </div>
+        
+            </div>
+</div>
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">New Inquiry about tender </h4><h4 id="modal_notice_id"></h4>
+                                                                                                 </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">Question:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="suubmit" class="btn btn-primary">Post inquiry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    
+
+    $('#suubmit').on('click', function (evt) {
+        var message = $('#message-text').val();
+        var noticeId = $('#modal_notice_id').text();   
+        $.getJSON("@Url.Action("addNewInquiry", "Tender", new { noticeId="_noticeId", Question = "_question" })".replace("_noticeId", noticeId).replace("_question", message), function (data) {
+        });
+
+        $.getJSON("@Url.Action("CreateType1Notification", "Notification", new { tenderId = "_tenderId"})".replace("_tenderId", noticeId), function (data) {
+        });
+
+        $('#exampleModal').modal('hide');
+    });
+
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) 
+        var NoticeId = button.data('whatever') 
+        $('#modal_notice_id').text(NoticeId);
+
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#pdf').hide();
+        $('#Details').hide();
+    }, false);
+
+    function bid(val)
+    {
+        window.location.href = '/Bid/AddNewBid/' + val;
+    }
+
+    function compDetails(val) {
+        $('#inquiry').hide();
+        $('#pdf').hide();
+        $('#Details').show(1000);
+        var items = [];
+        $.getJSON("@Url.Action("getAllOrganizations", "Organization", new { OrgUserName = "_OrgUserName" })".replace("_OrgUserName",val), function (data) {
+            $.each(data, function (key, val) {
+
+                $("#Company").html(val.Name);
+                $("#Address").html(val.Address);
+                $("#TP").html(val.TPNo);
+                $("#Email").html(val.Email);
+                $("#Web").html(val.Web);
+            });
+        });
+    }
+
+    function loadpdf(val)
+    {
+        $('#inquiry').hide();
+        $('#Details').hide();
+        $('#pdf').show(1000);
+        var iframe = $('#pdf');
+        iframe.attr('src', "@Url.Action("getPDFofNotice", "Tender", new { noticeID = "temp" })".replace("temp", val));
+        console.log(val);
+    }
+
+
+    function info(val) {
+        $('#Details').hide();
+        $('#pdf').hide();
+        $('#inquiry').show(1000);
+        var items = [];
+        $.getJSON("@Url.Action("takeAllInquries", "Tender", new { tenderId = "_tenderId" })".replace("_tenderId", val), function (data) {
+            $.each(data, function (key, val) {
+
+                items.push(
+                    "<label class='col-lg-2 control-label'>"+"Question :"+"</label>"+
+                    "<label class='col-lg-10 control-label' style='color:blue'>"+val.Question+"</label>"+
+                    "<label class='col-lg-2 control-label'>Answer :</label>"+
+                    "<label class='col-lg-10 control-label' style='color:blue'>"+val.Answer+"</label>"
+                    );               
+            });
+            $("#inquiry").html(items.join(""));
+        });
+    }  
+    function notification(val)
+    {
+        $.getJSON("@Url.Action("caughtNotification", "Notification", new { notificationID = "_notiId" })".replace("_notiId", val), function (data) {
+        });
+    }
+</script>
+
+@Html.DisplayFor(m => ViewData);

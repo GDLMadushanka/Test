@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewBag.Title = "registerBidder";
+}
+<br />
+<br />
+<br />
+<div class="row">
+    <div class="col-lg-6 col-lg-offset-3">
+        <div class="well bs-component">
+            <form class="form-horizontal" id="form123"
+                  action="@Url.Action("registerNewBidder", "User")" method="POST" name="registerForm" enctype="multipart/form-data" onsubmit="return validateMyForm();">
+                <fieldset>
+                    <legend>Register as Bidder</legend>
+
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-2 control-label">name</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" name="name" placeholder="Name" required maxlength="50">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputAddress" class="col-lg-2 control-label">Address</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" name="Address" placeholder="Address" required maxlength="200">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputTelephoneNo" class="col-lg-2 control-label">Telephone NOs</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="txtboxToFilter" class="form-control" name="telephoneNo" placeholder="0717276083" required maxlength="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group align-left">
+                        <label for="Picture" class="col-lg-2 control-label">Profile Picture</label>
+                        <div class="col-lg-4">
+                            <input id="imgInput" type="file" accept="image/*" name="picture">
+                        </div>
+                    </div>
+
+
+                    <fieldset>
+                        <legend>Choose your bidding category(s):</legend>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="chq1" onchange="selectOption()"> Canteens
+                            </label><br />
+                            <label>
+                                <input type="checkbox" name="chq2" onchange="selectOption()"> Cleaning services
+                            </label><br />
+                            <label>
+                                <input type="checkbox" name="chq3" onchange="selectOption()"> Construction
+                            </label><br />
+                            <label>
+                                <input type="checkbox" name="chq4" onchange="selectOption()"> Delivery services
+                            </label><br />
+                            <label>
+                                <input type="checkbox" name="chq5" onchange="selectOption()"> security services
+                            </label><br />
+                            <label>
+                                <input type="checkbox" name="chq6" onchange="selectOption()"> Vehicles
+                            </label><br />
+                            <label class="col-lg-12 control-label" id="errorchk" style="color:red"></label>
+                        </div>
+                    </fieldset>
+                    <br />
+                    <fieldset>
+                        <legend>Login Details:</legend>
+                        <div class="form-group">
+                            <label for="inputUserName" class="col-lg-2 control-label">User Name</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" name="UserName" placeholder="User Name" required id="uname" maxlength="40">
+                            </div>
+                            <label class="col-lg-12 control-label" id="error" style="color:red"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                            <div class="col-lg-10">
+                                <input type="password" class="form-control" name="password" required maxlength="20">
+
+                            </div>
+
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <button type="reset" class="btn btn-default">Cancel</button>
+                            <button class="btn btn-primary" id="subbutton"type="submit">Register</button>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $('#uname').on('input', function() { 
+        var namee= $('#uname').val(); // get the current value of the input field.
+        $('#error').html("");
+        document.getElementById("subbutton").disabled = false;
+        $.getJSON("@Url.Action("checkAvailability", "User", new { username = "_uname" })".replace("_uname", namee), function (data) {
+            data = $.parseJSON(data);
+            if (Boolean(data) == true)
+            {
+                document.getElementById("subbutton").disabled = true;
+                $('#error').html("This user name already exists");
+            }      
+        });
+    });
+
+    function selectOption()
+    {
+        $('#errorchk').html("");
+    }
+ 
+    
+
+    $("#form123").submit(function () {
+        var checked = $("#form123 input:checked").length > 0;
+        if (!checked) {
+            $('#errorchk').html("Please select atleast one option");
+            return false;
+        }
+    });
+
+    $("#txtboxToFilter").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            // Allow: Ctrl+A, Command+A
+            (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+            // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+            // let it happen, don't do anything
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+
+    </script>
+@Html.DisplayFor(m => ViewData);

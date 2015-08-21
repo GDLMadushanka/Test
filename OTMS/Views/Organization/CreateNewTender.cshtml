@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "CreateNewTender";
+}
+
+<h2>Create New Tender</h2>
+
+<br />
+<div class="row">
+    <div class="col-lg-6 col-lg-offset-3">
+        <div class="well bs-component">
+            <form class="form-horizontal" name="NewTenderForm" action="@Url.Action("CreateNewTender", "Organization")" method="POST" enctype="multipart/form-data" id="form123">
+                <fieldset>
+                    <legend>New Tender Notice</legend>
+
+
+                    <div class="form-group">
+                        <label for="select" class="col-lg-2 control-label">Choose category</label>
+                        <div class="col-lg-10">
+                            <select class="form-control" name="select">
+                                <option>canteens</option>
+                                <option>cleaning services</option>
+                                <option>construction</option>
+                                <option>delivery services</option>
+                                <option>security services</option>
+                                <option>vehicles</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateTime" class="col-lg-2 control-label">Expire date and time</label>
+                        <div class="col-lg-10">
+
+
+                            <input type="text" class="form-control" id="datetimepicker" name="dateTime" placeholder="Finish Date/Time" value="" required>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group align-left">
+                        <label for="PDF" class="col-lg-2 control-label">Tender Notice (PDF)</label>
+                        <div class="col-lg-4">
+                            <input id="pdfInput" type="file" accept=".pdf" name="PDF">
+                        </div>
+                    </div>
+                    <label class="col-lg-12 control-label" id="error" style="color:red"></label>
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <button type="reset" class="btn btn-default">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+   
+    $('#datetimepicker').datetimepicker({
+        dayOfWeekStart: 1,
+        lang: 'en',
+        minDate: 0
+    });
+    //$('#datetimepicker').datetimepicker({value:'2015/04/15 05:03',step:10});
+
+    
+
+    $("#form123").submit(function () {
+        if (document.getElementById("pdfInput").value == "") {
+            $('#error').html("Please select a PDF file");
+            return false;
+        }
+        else { $('#error').html(""); return true; }
+        
+
+    });
+
+     
+    </script>    
+
+
+
+@Html.DisplayFor(m => ViewData);
