@@ -26,7 +26,7 @@ namespace OTMS.Controllers
 
         public ActionResult CreateNewTender()
         {
-
+            //eryery
             if (Request.HttpMethod.Equals("POST"))  //  create new tender by organization
             {
                 TenderNoticeModel tenderModel = new TenderNoticeModel();
