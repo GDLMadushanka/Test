@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "CreateNewTender";
 }
-
+<br /><br />
 <h2>Create New Tender</h2>
 
 <br />
@@ -31,8 +31,6 @@
                     <div class="form-group">
                         <label for="dateTime" class="col-lg-2 control-label">Expire date and time</label>
                         <div class="col-lg-10">
-
-
                             <input type="text" class="form-control" id="datetimepicker" name="dateTime" placeholder="Finish Date/Time" value="" required>
                         </div>
                     </div>
@@ -76,13 +74,5 @@
             return false;
         }
         else { $('#error').html(""); return true; }
-        
-
-    });
-
-     
+    });     
     </script>    
-
-
-
-@Html.DisplayFor(m => ViewData);

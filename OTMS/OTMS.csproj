@@ -183,6 +183,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\ani.gif" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\empty_profile.gif" />
     <Content Include="Content\jquery.datetimepicker.css" />

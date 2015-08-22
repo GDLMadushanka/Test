@@ -30,7 +30,10 @@
        
         <div class="container">
             <div class="navbar-header">
-                <img src="@Url.Content("~/Content/OTMSlogo2.png")" height="60" width="100" />
+                <a href="@Url.Action("Index", "Home")">
+                    <img src="@Url.Content("~/Content/ani.gif")" height="60" width="300" />
+                </a> 
+               
               
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -80,7 +83,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; GD Soft since 2007</p>
         </footer>
     </div>
 

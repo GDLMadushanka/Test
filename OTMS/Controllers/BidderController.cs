@@ -74,13 +74,13 @@ namespace OTMS.Controllers
                     }
                     else
                     {
-                        ViewData["errorMsg"] = "Username or Password not match";    //  error handling
+                        ViewData["errorMsg"] = "Username or Password not match";
+                        return View();
+                        //  error handling
                     }
                 }
                 catch { ViewData["errorMsg"] = "Username or Password not match"; }
-
             }
-           
             return View();
         }
 	}

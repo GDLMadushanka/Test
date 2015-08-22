@@ -34,8 +34,9 @@ namespace OTMS.Controllers
                 }
 
                 DBContext.GetInstance().CreateNewBid(bid);
+                return RedirectToAction("BidDashboard", "Bidder"); 
             }
-            return RedirectToAction("BidDashboard", "Bidder");      //  return to dashboard after creating it.
+            return RedirectToAction("BidDashboard", "Bidder");   //  return to dashboard after creating it.
         }
         public ActionResult AddNewBid(String noticeId) 
         {

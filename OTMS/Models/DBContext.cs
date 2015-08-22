@@ -16,10 +16,12 @@ namespace OTMS.Models
         {
             if (instance == null)
                 instance = new DBContext();
-
+              
+            
             if (instance.DbConnection.State == System.Data.ConnectionState.Open)
                 instance.DbConnection.Close();
-            return instance;
+                return instance;
+
         }
 
         private void CheckIfConeectionOpen()

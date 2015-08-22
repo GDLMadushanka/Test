@@ -138,6 +138,7 @@ namespace OTMS.Controllers
                     ViewData["hasError"] = 1;
                     ViewData["errorMsg"] = "Username already exists";
                 }
+                return RedirectToAction("OrganizationLogin", "Organization");
             }
 
             return View();

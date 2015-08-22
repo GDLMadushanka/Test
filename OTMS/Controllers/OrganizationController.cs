@@ -107,7 +107,6 @@ namespace OTMS.Controllers
                 }
             }
             catch { ViewData["errorMsg"] = "Username or Password not match"; }
-
             }
             return View();
         }
