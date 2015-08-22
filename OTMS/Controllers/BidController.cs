@@ -39,8 +39,15 @@ namespace OTMS.Controllers
         }
         public ActionResult AddNewBid(String noticeId) 
         {
-            ViewData["noticeId"] = noticeId;
-            return View();
+            if (Session["isOrg"] != null)   //  if not in a session 
+            {
+                if (!(bool)Session["isOrg"]) //  If bidders session
+                {
+                    ViewData["noticeId"] = noticeId;
+                    return View();  //  return correct view
+                }
+            }
+            return null;    // do nothing
         }
 	}
 }

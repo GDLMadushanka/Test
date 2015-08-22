@@ -9,36 +9,23 @@ namespace OTMS.Controllers
 {
     public class UserController : Controller
     {
-        //
-        // GET: /User/
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult checkAvailability(String username)
+        public ActionResult checkAvailability(String username)  //  check availability of a Bidder username - already taken or not.
         {
             Boolean x = DBContext.GetInstance().verifyUserName(username);
             return Json(x, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult checkAvailabilityOrg(String username)
+        public ActionResult checkAvailabilityOrg(String username)//check availability of an organization username - already taken or not.
         {
             Boolean x = DBContext.GetInstance().verifyUserNameOrg(username);
             return Json(x, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult registerNewBidder()
+        public ActionResult registerNewBidder()     //  create a new bidder instance
         {
-            ViewData["success"] = 0;
-            ViewData["hasError"] = 0;
-            ViewData["errorMsg"] = "";
-
             if (Request.HttpMethod.Equals("POST"))
-            {
-
-                
+            {       
                 BidderModel newBidder = new BidderModel()
                 {
-                    Name = Request.Form["name"],
+                    Name = Request.Form["name"],    //  take data from HTML form
                     Address = Request.Form["address"],
                     tpNo = Request.Form["telephoneNo"],
                     userName = Request.Form["username"],
@@ -46,7 +33,7 @@ namespace OTMS.Controllers
                 };
                     HttpPostedFileBase file = Request.Files["picture"];
 
-                if (file != null && file.ContentLength > 0)
+                if (file != null && file.ContentLength > 0) //  upload file
                 {
                     System.IO.Stream fileStream = file.InputStream;
                     byte[] data= new byte[file.ContentLength];
@@ -56,13 +43,13 @@ namespace OTMS.Controllers
                 }
 
                 BidderModel existing = DBContext.GetInstance().FindOneInBidder("username", newBidder.userName);
-                if (existing == null)
+                if (existing == null)   //  see weather this this user is already existing. 
                 {
-                    DBContext.GetInstance().CreateBidder(newBidder);
+                    DBContext.GetInstance().CreateBidder(newBidder);    // create db entry
 
                     if (Request.Form["chq1"] != null && Request.Form["chq1"] == "on")
                     {
-                        FieldListModel field = new FieldListModel();
+                        FieldListModel field = new FieldListModel();    // registered fields
                         field.FieldName = "canteens";
                         field.UserName = newBidder.userName;
                         DBContext.GetInstance().CreateFieldListEntry(field);
@@ -113,19 +100,14 @@ namespace OTMS.Controllers
                 return RedirectToAction("Bidderlogin", "Bidder");
             }
             return View();
-        
         }
 
-        public ActionResult registerNewOrganization()
+        public ActionResult registerNewOrganization()   //  create new organization
         {
-            ViewData["success"] = 0;
-            ViewData["hasError"] = 0;
-            ViewData["errorMsg"] = "";
-
             if (Request.HttpMethod.Equals("POST"))
             {
                 OrganizationModel newOrganization = new OrganizationModel
-                {
+                {                               //  take data from HTML form
                     Name = Request.Form["name"],
                     Address = Request.Form["address"],
                     TPNo = Request.Form["telephoneNo"],
@@ -134,7 +116,7 @@ namespace OTMS.Controllers
                     userName = Request.Form["username"],
                     password = Request.Form["password"]
                 };
-                HttpPostedFileBase file = Request.Files["picture"];
+                HttpPostedFileBase file = Request.Files["picture"]; //  upload profile picture
 
                 if (file != null && file.ContentLength > 0)
                 {
@@ -146,7 +128,7 @@ namespace OTMS.Controllers
                 }
 
                 OrganizationModel existing = DBContext.GetInstance().FindOneInOrganization("username", newOrganization.userName);
-                if (existing == null)
+                if (existing == null)   //  if there's already an organization
                 {
                     DBContext.GetInstance().CreateOrganization(newOrganization);
                 }
@@ -166,9 +148,9 @@ namespace OTMS.Controllers
             if (Session["isOrg"] != null)
             {
                 bool isOrg = (bool)Session["isOrg"];
-                Session.Clear();
+                Session.Clear();        //  clear session data when loggin out
                 Session.Abandon();
-                if (isOrg)
+                if (isOrg)          //  redirect to logig pages accordingly
                 {
                     return RedirectToAction("OrganizationLogin", "Organization");
                 }

@@ -16,38 +16,50 @@ namespace OTMS.Controllers
         }
         public ActionResult OrgDashboard()  //  view where all controllers for organization reisdes 
         {
-            List<TenderNoticeModel> Tenders = DBContext.GetInstance().findTendersOfOrg("organization", (String)Session["username"]);
-            ViewData["org"] = Session["username"];
-            ViewData["num"] =Tenders.Count;
-            ViewData["tenders"] = Tenders;
-            ViewData["notifications"] = DBContext.GetInstance().findNotificationsOfOrg((String)Session["username"]);
-            return View();
+            if (Session["isOrg"] != null)   //  if not in a session 
+            {
+                if ((bool)Session["isOrg"]) //  If organization session
+                {
+                    List<TenderNoticeModel> Tenders = DBContext.GetInstance().findTendersOfOrg("organization", (String)Session["username"]);
+                    ViewData["org"] = Session["username"];
+                    ViewData["num"] = Tenders.Count;
+                    ViewData["tenders"] = Tenders;
+                    ViewData["notifications"] = DBContext.GetInstance().findNotificationsOfOrg((String)Session["username"]);
+                    return View();
+                }
+            }
+            return null;  
         }
 
         public ActionResult CreateNewTender()
         {
-            
-            if (Request.HttpMethod.Equals("POST"))  //  create new tender by organization
+            if (Session["isOrg"] != null)   //  if not in a session 
             {
-                TenderNoticeModel tenderModel = new TenderNoticeModel();
-                tenderModel.Organization = (String)Session["username"];
-                tenderModel.FieldName = Request.Form["select"];
-                tenderModel.ExpDateTime = Convert.ToDateTime(Request.Form["dateTime"]); //  expiring date 
-                tenderModel.SubDateTime = DateTime.Now;
-                HttpPostedFileBase file = Request.Files["PDF"];     //  upload PDF
-
-                if (file != null && file.ContentLength > 0)
+                if ((bool)Session["isOrg"]) //  If Organization session
                 {
-                    System.IO.Stream fileStream = file.InputStream;
-                    byte[] data = new byte[file.ContentLength];
-                    fileStream.Read(data, 0, data.Length);
-                    fileStream.Close();
-                    tenderModel.PdfDoc = data;
+                    if (Request.HttpMethod.Equals("POST"))  //  create new tender by organization
+                    {
+                        TenderNoticeModel tenderModel = new TenderNoticeModel();
+                        tenderModel.Organization = (String)Session["username"];
+                        tenderModel.FieldName = Request.Form["select"];
+                        tenderModel.ExpDateTime = Convert.ToDateTime(Request.Form["dateTime"]); //  expiring date 
+                        tenderModel.SubDateTime = DateTime.Now;
+                        HttpPostedFileBase file = Request.Files["PDF"];     //  upload PDF
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            System.IO.Stream fileStream = file.InputStream;
+                            byte[] data = new byte[file.ContentLength];
+                            fileStream.Read(data, 0, data.Length);
+                            fileStream.Close();
+                            tenderModel.PdfDoc = data;
+                        }
+                        DBContext.GetInstance().createTenderNotice(tenderModel);    // create db entry
+                    }
+                    return View();
                 }
-               DBContext.GetInstance().createTenderNotice(tenderModel);
-             
             }
-            return View();
+            return null;  // fo nothing if not in a session
         }
 
         public ActionResult OrganizationLogin()
@@ -56,11 +68,11 @@ namespace OTMS.Controllers
             {
                 if ((bool)Session["isOrg"]) //  if already logged on redirect to appropiate dashboard
                 {
-                    return RedirectToAction("OrgDashboard", "Organization");
+                    return RedirectToAction("OrgDashboard", "Organization"); // redirect to organization home page
                 }
-                else
+                else //  bidder trying to enter org area
                 {
-                    return RedirectToAction("BidDashboard", "Bidder");
+                    return RedirectToAction("BidDashboard", "Bidder"); // redirect to bidder dashboard
                 }
             }
 
@@ -86,7 +98,6 @@ namespace OTMS.Controllers
                 }
                 else
                 {
-                    ViewData["hasError"] = 1;               //  error messges
                     ViewData["errorMsg"] = "Username or Password not match";
                 }
 

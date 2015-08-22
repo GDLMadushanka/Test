@@ -165,13 +165,18 @@
         console.log(val2);
         
         var x = document.getElementById(val);
-        $.getJSON("@Url.Action("answerInquiry", "Tender", new { inqueryId="_inqueryId", answer = "_answer" })".replace("_inqueryId", val).replace("_answer", x.value), function (data) {
-        });
+        if (x === "") {
+            return false;
+        }
+        else {
+            $.getJSON("@Url.Action("answerInquiry", "Tender", new { inqueryId="_inqueryId", answer = "_answer" })".replace("_inqueryId", val).replace("_answer", x.value), function (data) {
+            });
 
-        $.getJSON("@Url.Action("CreateType2Notification", "Notification", new { tenderID = "_tenderID", user = "_user" })".replace("_tenderID",String(@temp.NoticeId)).replace("_user", val2), function (data) {
-         });
+            $.getJSON("@Url.Action("CreateType2Notification", "Notification", new { tenderID = "_tenderID", user = "_user" })".replace("_tenderID", String(@temp.NoticeId)).replace("_user", val2), function (data) {
+            });
 
-        $(x).parents(".tempory").hide(1000);
+            $(x).parents(".tempory").hide(1000);
+        }
     }
 
    

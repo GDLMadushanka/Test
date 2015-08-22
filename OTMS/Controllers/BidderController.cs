@@ -28,13 +28,13 @@ namespace OTMS.Controllers
         {
             if (Session["isOrg"] != null)
             {
-                if ((bool)Session["isOrg"]) //  If wrong session redirect to correct dashboard
+                if ((bool)Session["isOrg"]) //  if company trying to enter bidders area
                 {
-                    return RedirectToAction("OrgDashboard", "Organization");
+                    return RedirectToAction("OrgDashboard", "Organization");    //  redirect to company dashboard
                 }
                 else
                 {
-                    return RedirectToAction("BidDashboard", "Bidder");
+                    return RedirectToAction("BidDashboard", "Bidder");  //  already logged in so redirect
                 }
             }
 
@@ -60,8 +60,7 @@ namespace OTMS.Controllers
                 }
                 else
                 {
-                    ViewData["hasError"] = 1;                       //  error handling messages.
-                    ViewData["errorMsg"] = "Username or Password not match";
+                    ViewData["errorMsg"] = "Username or Password not match";    //  error handling
                 }
 
             }
