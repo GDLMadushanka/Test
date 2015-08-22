@@ -20,7 +20,7 @@ namespace OTMS.Controllers
             if (Request.HttpMethod.Equals("POST"))
             {
                    BidModel bid = new BidModel();
-                   bid.Owner = (String)Session["user"];
+                   bid.Owner = (String)Session["username"];
                    bid.NoticeId = int.Parse(Request.Form["noticeid"]);
                    HttpPostedFileBase file = Request.Files["PDF"];
 

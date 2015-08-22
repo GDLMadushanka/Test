@@ -77,11 +77,16 @@ namespace OTMS.Controllers
             }
 
             if (Request.HttpMethod.Equals("POST"))  
+            { 
+                OrganizationModel existing;
+            try
             {
-                OrganizationModel existing = DBContext.GetInstance().FindOneInOrganization("username", Request.Form["username"]);
-                char[] temp = null;
+                existing = DBContext.GetInstance().FindOneInOrganization("username", Request.Form["username"]);
 
+
+                char[] temp = null;
                 temp = existing.password.ToCharArray();
+
                 for (int i = 0; i < temp.Length; i++)
                 {
                     temp[i] = (char)((int)Convert.ToChar(temp[i]) - 5);   // ReHash Function
@@ -100,6 +105,8 @@ namespace OTMS.Controllers
                 {
                     ViewData["errorMsg"] = "Username or Password not match";
                 }
+            }
+            catch { ViewData["errorMsg"] = "Username or Password not match"; }
 
             }
             return View();
@@ -108,7 +115,6 @@ namespace OTMS.Controllers
         public ActionResult getAllOrganizations(String OrgUserName)     //  AJAX update to get all organizations
         {
             List<OrganizationModel> orgList = DBContext.GetInstance().getOrganizationsOfNotice(OrgUserName);
-
             return Json(orgList, JsonRequestBehavior.AllowGet); //  return JSON object
         }
 

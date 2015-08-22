@@ -54,7 +54,7 @@ namespace OTMS.Controllers
             {
                 NoticeId = int.Parse(noticeId),
                 Question = Question,
-                User = (String)Session["user"],
+                User = (String)Session["username"],
                 Answered = false
             };
             DBContext.GetInstance().createInquiry(inq); //  create DB 

@@ -83,7 +83,7 @@
                     
 
                     <hr />
-                    <h4>Unanswered Inquiries about this tender</h4>
+                    <h4><u>Unanswered Inquiries about this tender</u></h4>
                     @foreach (OTMS.Models.InquiryModel inq in inqList)
                     {
                         <div class="tempory">
@@ -99,23 +99,24 @@
                     }
                     <hr />
                     <div id="winner">                         
-                        @if(temp.AcceptedBidder == ""&& biddersList.Count > 0){ 
+                        @if(temp.AcceptedBidder == ""&& biddersList.Count > 0 && (int)differnce.Minutes<=0){ 
                     String x=null;
                     <label for="select" class="col-lg-2 control-label">Winning Bid ID</label>
-                    <div class="col-lg-1">
-                        <select class="form-control" id="select">
+                    <div class="col-lg-2">
+                        <select multiple="" class="form-control" id="select">
                             @foreach (OTMS.Models.BiddersOfNotice bidders in biddersList)
                             {
-                                 <option>@bidders.BidId</option>
-                                 x = @bidders.userName;
+                                <option>@bidders.BidId</option>
+                                x = @bidders.userName;
                             }
                         </select>
+
                     </div>
                     <label for="select" class="col-lg-1 control-label">Reasoning</label>
                     <div class="col-lg-4">
-                        <input class="form-control" type="text" id="reason">
+                        <input class="form-control" type="text" id="reason" required maxlength="400">
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <a href="#" class="btn btn-success" onclick="selectWinner('@x')">Select this bid as winning bid</a>
                     </div>}
                         else { ViewBag.expired = false; }
@@ -150,13 +151,16 @@
         var reason = $('#reason').val();
         var tenid = String(@temp.NoticeId);
 
-        $.getJSON("@Url.Action("TenderWinner", "Tender", new { tenderID="_tenderId", acceptedbidder = "_bidder",notice="_notice" })".replace("_tenderId",tenid ).replace("_bidder", val).replace("_notice", reason), function (data) {
-        });
+        if (reason === "" || bidid==="") { return false; } else {
 
-        $.getJSON("@Url.Action("CreateType3Notification", "Notification", new { tenderID = "_tenderId", bidder = "_bidder"})".replace("_tenderId",tenid ).replace("_bidder", val), function (data) {
-        });
+            $.getJSON("@Url.Action("TenderWinner", "Tender", new { tenderID="_tenderId", acceptedbidder = "_bidder",notice="_notice" })".replace("_tenderId", tenid).replace("_bidder", val).replace("_notice", reason), function (data) {
+            });
 
-        $('#winner').hide(1000);
+            $.getJSON("@Url.Action("CreateType3Notification", "Notification", new { tenderID = "_tenderId", bidder = "_bidder"})".replace("_tenderId", tenid).replace("_bidder", val), function (data) {
+            });
+
+            $('#winner').hide(1000);
+        }
     }
 
     function submitAns(val,val2)
@@ -165,7 +169,7 @@
         console.log(val2);
         
         var x = document.getElementById(val);
-        if (x === "") {
+        if (x.value === "") {
             return false;
         }
         else {

@@ -3,7 +3,7 @@
     ViewBag.Title = "OrgDashboard";
     List<OTMS.Models.NotificationModel> notilist = (List<OTMS.Models.NotificationModel>)ViewData["notifications"];
 }
-
+<br /><br />
 <h3>@Session["name"]'s Dashboard</h3>
 <input type="button" class="btn btn-info" value="Create new tender" onclick="location.href='@Url.Action("CreateNewTender", "Organization")'" />
 

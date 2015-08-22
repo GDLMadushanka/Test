@@ -4,7 +4,7 @@
     ViewBag.Title = "BidDashboard";
     List<OTMS.Models.NotificationModel> notilist = (List<OTMS.Models.NotificationModel>)ViewData["notifications"];
 }
-
+<br /><br />
     <h3>@Session["user"]'s Dashboard</h3>
 
 <div class="btn-group show-on-hover">
@@ -54,11 +54,6 @@
                                             <a href="#" class="btn btn-default" onclick="bid('@temp.NoticeId')">Bid</a>
                                            
                                         </div>
-
-                                   
-
-                                  
-
                                     </div>
                                 </div>
                             }
@@ -112,7 +107,7 @@
 
                     <div class="form-group">
                         <label for="message-text" class="control-label">Question:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <textarea class="form-control" id="message-text" required maxlength="400"></textarea>
                     </div>
                 </form>
             </div>
@@ -132,14 +127,17 @@
 
     $('#suubmit').on('click', function (evt) {
         var message = $('#message-text').val();
-        var noticeId = $('#modal_notice_id').text();   
-        $.getJSON("@Url.Action("addNewInquiry", "Tender", new { noticeId="_noticeId", Question = "_question" })".replace("_noticeId", noticeId).replace("_question", message), function (data) {
-        });
+        var noticeId = $('#modal_notice_id').text();
 
-        $.getJSON("@Url.Action("CreateType1Notification", "Notification", new { tenderId = "_tenderId"})".replace("_tenderId", noticeId), function (data) {
-        });
+        if (message === "") { return false; } else {
+            $.getJSON("@Url.Action("addNewInquiry", "Tender", new { noticeId="_noticeId", Question = "_question" })".replace("_noticeId", noticeId).replace("_question", message), function (data) {
+            });
 
-        $('#exampleModal').modal('hide');
+            $.getJSON("@Url.Action("CreateType1Notification", "Notification", new { tenderId = "_tenderId"})".replace("_tenderId", noticeId), function (data) {
+            });
+
+            $('#exampleModal').modal('hide');
+        }
     });
 
     $('#exampleModal').on('show.bs.modal', function (event) {
@@ -194,13 +192,14 @@
         var items = [];
         $.getJSON("@Url.Action("takeAllInquries", "Tender", new { tenderId = "_tenderId" })".replace("_tenderId", val), function (data) {
             $.each(data, function (key, val) {
-
-                items.push(
-                    "<label class='col-lg-2 control-label'>"+"Question :"+"</label>"+
-                    "<label class='col-lg-10 control-label' style='color:blue'>"+val.Question+"</label>"+
-                    "<label class='col-lg-2 control-label'>Answer :</label>"+
-                    "<label class='col-lg-10 control-label' style='color:blue'>"+val.Answer+"</label>"
-                    );               
+                if (val.Answer != "") {
+                    items.push(
+                        "<label class='col-lg-2 control-label'>" + "Question :" + "</label>" +
+                        "<label class='col-lg-10 control-label' style='color:blue'>" + val.Question + "</label>" +
+                        "<label class='col-lg-2 control-label'>Answer :</label>" +
+                        "<label class='col-lg-10 control-label' style='color:blue'>" + val.Answer + "</label>"
+                        );
+                }
             });
             $("#inquiry").html(items.join(""));
         });
@@ -211,5 +210,3 @@
         });
     }
 </script>
-
-@Html.DisplayFor(m => ViewData);
